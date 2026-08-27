@@ -6,3 +6,10 @@
   alert("You: Not at all...");
   alert("Graphics Card (sighing): <i>This will take some time...<i>")
 </script>
+<dialog id="myAlert">
+  <h3><strong>Crucial Update!</strong></h3>
+  <p style="color: red;">This is formatted text inside a modal.</p>
+  <button onclick="document.getElementById('myAlert').close()">Dismiss</button>
+</dialog>
+
+<button onclick="document.getElementById('myAlert').showModal()">Trigger Alert</button>

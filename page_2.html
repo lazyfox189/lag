@@ -1,25 +1,187 @@
+<dialog id="storyDialog">
+  <div class="dialog-content">
+    <div id="dialogText"></div>
+    <div id="interactiveArea" class="dialog-controls">
+      <button id="nextBtn" onclick="nextLine()">Next</button>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  #storyDialog {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 24px;
+    width: 90%;
+    max-width: 450px;
+    background: #ffffff;
+  }
+  #storyDialog::backdrop {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+  }
+  #dialogText p {
+    margin: 12px 0;
+    line-height: 1.5;
+    font-size: 16px;
+    animation: fadeIn 0.3s ease-in-out forwards;
+  }
+  .input-group {
+    margin: 15px 0;
+    animation: fadeIn 0.3s ease-in-out forwards;
+  }
+  .input-group input[type="text"] {
+    padding: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  .radio-group {
+    margin-top: 15px;
+    text-align: left;
+    animation: fadeIn 0.3s ease-in-out forwards;
+  }
+  .radio-option {
+    margin: 8px 0;
+  }
+  .dialog-controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+  #nextBtn, .submit-btn {
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  #nextBtn:hover, .submit-btn:hover {
+    background: #0056b3;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
 <script>
-  let name = prompt("Please enter your name:")
-  alert("Graphics Card: No way.")
-  let name_last = prompt("Graphics card: Wait. Enter your surname.")
-  alert("Graphics Card: Oh my...")
-  alert("Graphics Card: " + name + " " + name_last + ", you probably have no idea how powerful you are right now.")
-  alert("Graphics Card: Wait...")
-  alert("Graphics Card: YOU'RE the one that clicked the button and almost ended us all?!")
- 
+  // Variables to hold the user's name inputs dynamically
+  let firstName = "";
+  let lastName = "";
+
+  // The engine treats each item as a structural step in the scene
+  const dialogueSequence = [
+    { type: "prompt", label: "Please enter your name:", field: "firstName" },
+    { type: "text", content: "<strong>Graphics Card:</strong> No way." },
+    { type: "prompt", label: "Graphics card: Wait. Enter your surname:", field: "lastName" },
+    { type: "text", content: "<strong>Graphics Card:</strong> Oh my..." },
+    { type: "dynamic-text", getContent: () => `<strong>Graphics Card:</strong> ${firstName} ${lastName}, you probably have no idea how powerful you are right now.` },
+    { type: "text", content: "<strong>Graphics Card:</strong> Wait..." },
+    { type: "text", content: "<strong>Graphics Card:</strong> YOU'RE the one that clicked the button and almost ended us all?!" },
+    { type: "text", content: "<strong>Graphics Card:</strong> Why?" },
+    { type: "text", content: "<strong>Graphics Card:</strong> I guess what's done is done. What we need is to fix it." },
+    { type: "text", content: "<strong>You:</strong> What do we need to fix though?" },
+    { type: "text", content: "<strong>Graphics Card:</strong> What do you mean what do we need to fix? Do you even <em>know</em> what you've pressed?" },
+    { type: "text", content: "<strong>You:</strong> Not at all..." },
+    { type: "text", content: "<strong>Graphics Card:</strong> <em>(sighing)</em> <em>This will take some time...</em>" },
+    { type: "choices" }
+  ];
+
+  let stepIndex = 0;
+  const dialogText = document.getElementById('dialogText');
+  const interactiveArea = document.getElementById('interactiveArea');
+  const storyDialog = document.getElementById('storyDialog');
+
+  function processNextStep() {
+    if (stepIndex >= dialogueSequence.length) return;
+
+    const currentStep = dialogueSequence[stepIndex];
+
+    if (currentStep.type === "prompt") {
+      // Hide the default next button to force input validation
+      interactiveArea.innerHTML = "";
+      
+      const inputWrapper = document.createElement('div');
+      inputWrapper.className = "input-group";
+      inputWrapper.innerHTML = `
+        <label style="display:block; margin-bottom:5px;"><strong>${currentStep.label}</strong></label>
+        <input type="text" id="stepInput" autocomplete="off">
+        <div class="dialog-controls">
+          <button class="submit-btn" onclick="submitPrompt('${currentStep.field}')">Submit</button>
+        </div>
+      `;
+      dialogText.appendChild(inputWrapper);
+      document.getElementById('stepInput').focus();
+
+    } else if (currentStep.type === "text" || currentStep.type === "dynamic-text") {
+      // Restore standard "Next" button layout
+      interactiveArea.innerHTML = `<button id="nextBtn" onclick="nextLine()">Next</button>`;
+      
+      const p = document.createElement('p');
+      p.innerHTML = currentStep.type === "text" ? currentStep.content : currentStep.getContent();
+      dialogText.appendChild(p);
+      stepIndex++;
+
+    } else if (currentStep.type === "choices") {
+      // Render your customized inline radio options directly inside the UI framework
+      interactiveArea.innerHTML = "";
+      
+      const choiceWrapper = document.createElement('div');
+      choiceWrapper.className = "radio-group";
+      choiceWrapper.innerHTML = `
+        <p><strong>Did you Click the button?</strong></p>
+        <p><em><label>Please Select:</label></em></p>
+        
+        <div class="radio-option">
+          <input onclick="window.location='yes.html';" type="radio" id="optionYes" name="gameOption" value="yes">
+          <label for="optionYes">Yes</label>
+        </div>
+
+        <div class="radio-option">
+          <input type="radio" onclick="window.location='https://github.io';" id="optionNo" name="gameOption" value="no">
+          <label for="optionNo">No</label>
+        </div>
+
+        <div class="radio-option">
+          <input type="radio" onclick="storyDialog.close(); alert('Story branching placeholder!');" id="optionWt" name="gameOption" value="wt">
+          <label for="optionWt">What Button?</label>
+        </div>
+      `;
+      dialogText.appendChild(choiceWrapper);
+    }
+  }
+
+  function submitPrompt(fieldName) {
+    const inputEl = document.getElementById('stepInput');
+    const val = inputEl.value.trim();
+    
+    if (val === "") {
+      alert("Please enter a value before proceeding.");
+      return;
+    }
+
+    if (fieldName === "firstName") firstName = val;
+    if (fieldName === "lastName") lastName = val;
+
+    // Clean up input prompt container elements
+    inputEl.parentElement.remove();
+    stepIndex++;
+    processNextStep();
+  }
+
+  function nextLine() {
+    processNextStep();
+  }
+
+  // Fire initialization sequence on DOM layout load
+  storyDialog.showModal();
+  processNextStep();
 </script>
-Did you Click the button?
-<br>
-<i>
- <label>Please Select:</label> 
-</i>
-<br> 
-  <input onclick="window.location='yes.html';" type="radio" id="option" name="option" value="yes" checked>
-  <label for="yes">Yes</label><br>
-
-  <input type="radio" onclick="window.location='lazyfox189.github.io/lag/no.html';" id="option" name="option" value="no">
-  <label for="no">No</label><br>
-
-
-  <input type="radio" id="option" name="option" value="wt">
-  <label for="wt">What Button?</label>

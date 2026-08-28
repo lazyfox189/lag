@@ -1,54 +1,128 @@
-<title>
-    Someone
-</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Someone</title>
+  <style>
+    #storyDialog {
+      border: none;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 24px;
+      width: 90%;
+      max-width: 450px;
+      background: #ffffff;
+    }
+    #storyDialog::backdrop {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(2px);
+    }
+    #dialogText p {
+      margin: 12px 0;
+      line-height: 1.5;
+      font-size: 16px;
+      animation: fadeIn 0.3s ease-in-out forwards;
+    }
+    .dialog-controls {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+    #nextBtn {
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.2s;
+    }
+    #nextBtn:hover {
+      background: #0056b3;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<dialog id="storyDialog">
+  <div class="dialog-content">
+    <div id="dialogText"></div>
+    <div id="interactiveArea" class="dialog-controls">
+      <button id="nextBtn" onclick="nextLine()">Next</button>
+    </div>
+  </div>
+</dialog>
+
 <script>
-    alert("Oh.")
-    alert("Its you!")
-    alert("They had quite a conversation while you pressed that button.")
-    alert("Here it is now.")
+  const dialogueSequence = [
+    { type: "text", content: "<strong>Someone:</strong> Oh." },
+    { type: "text", content: "<strong>Someone:</strong> Its you!" },
+    { type: "text", content: "<strong>Someone:</strong> They had quite a conversation while you pressed that button." },
+    { type: "text", content: "<strong>Someone:</strong> Here it is now." },
+    { type: "text", content: "<strong>Hardrive:</strong> Why did he actual press that though." },
+    { type: "text", content: "<strong>Motherboard:</strong> Its so sad that the cromebook is close to gone now..." },
+    { type: "text", content: "<strong>Hardrive:</strong> Only he can save us now..." },
+    { type: "text", content: "<strong>Motherboard:</strong> Who's <em>he</em>?" },
+    { type: "text", content: "<strong>Hardrive:</strong> <em>Shhhh.</em> They can hear you." },
+    { type: "text", content: "<strong>Motherboard (panicking):</strong> They can?" },
+    { type: "text", content: "<strong>Hardrive:</strong> Yes. We must tell them indirectly..." },
+    { type: "text", content: "<strong>Motherboard:</strong> How?" },
+    { type: "text", content: "<strong>Hardrive:</strong> Digitaly. I working on a link. Wait for a sec..." },
+    { type: "text", content: "<strong>Hardrive:</strong> Done!" },
+    { type: "text", content: "<strong>Motherboard:</strong> How do you know they will be tempted to press it?" },
+    { type: "text", content: "<strong>Hardrive:</strong> Oh, they will. They will..." },
+    { type: "text", content: "<strong>Graphics Card:</strong> Hush! The chosen one will—" },
+    { type: "text", content: "<strong>Motherboard:</strong> But who is th—" },
+    { type: "text", content: "<strong>Graphics Card:</strong> <strong>Silence!</strong> We cannot waste our time arguing." },
+    { type: "text", content: "<strong>Motherboard (muttering):</strong> Not that we have..." },
+    { type: "text", content: "<strong>Graphics Card:</strong> *Ahem* As I was saying, <em>I</em> will be creating the link." },
+    { type: "text", content: "<strong>Hardrive:</strong> But what about mine?" },
+    { type: "text", content: "<strong>Graphics Card:</strong> Your pathetic jumble of text will do NOTHING!" },
+    { type: "text", content: "<strong>Graphics Card:</strong> Anyway, the reader clicks the button below, and violá!" },
+    { type: "end-link" }
+  ];
+
+  let stepIndex = 0;
+  const dialogText = document.getElementById('dialogText');
+  const interactiveArea = document.getElementById('interactiveArea');
+  const storyDialog = document.getElementById('storyDialog');
+
+  function processNextStep() {
+    if (stepIndex >= dialogueSequence.length) return;
+
+    const currentStep = dialogueSequence[stepIndex];
+
+    if (currentStep.type === "text") {
+      const p = document.createElement('p');
+      p.innerHTML = currentStep.content;
+      dialogText.appendChild(p);
+      stepIndex++;
+
+      if (dialogueSequence[stepIndex] && dialogueSequence[stepIndex].type === "end-link") {
+        processNextStep();
+      }
+    } else if (currentStep.type === "end-link") {
+      interactiveArea.innerHTML = `
+        <a href="https://github.io" id="nextBtn">> Next:</a>
+      `;
+    }
+  }
+
+  function nextLine() {
+    processNextStep();
+  }
+
+  storyDialog.showModal();
+  processNextStep();
 </script>
-<text>Hardrive: Why did he actual press that though.</text>
-<br>
-<text>Motherboard: Its so sad that the cromebook is close to gone now...</text>
-<br>
-<text>
-    Hardrive: Only he can save us now... 
-    <br>
-    Motherboard: Who's <i>he</i>?
-    <br>
-    Hardrive: <i>Shhhh.</i> They can hear you.
-    <br>
-    Motherboard (panicking): They can?
-    <br>
-    Hardrive: Yes. We must tell them indirectly...
-    <br>
-    Motherboard: How?
-    <br>
-    Hardrive: Digitaly. I working on a link. Wait for a sec...
-    <br>
-    Hardrive: Done!
-    <br>
-    Motherboard: How do you know they will be tempted to press it?
-    <br>
-    Hardrive: Oh, they will. They will...
-    <br>
-    Graphics Card: Hush! The chosen one will—
-    <br>
-    Motherboard: But who is th—
-    <br>
-    Graphics Card: <b>Silence!</b> We cannot waste our time arguing.
-    <br>
-    Motherboard (muttering): Not that we have...
-    <br>
-    Graphics Card: *Ahem* As I was saying, <i>I</i> will be creating the link.
-    <br>
-    Hardrive: But what about mine?
-    <br>
-    Graphics Card: Your pathetic jumble of text will do NOTHING!
-    <br>
-    Graphics Card: Anyway, the reader clicks the button below, and violá!
-    <br>
-    <br>
-</text>
-    <br>
-<a href="https://lazyfox189.github.io/lag/page_2.html"><button>> Next:</button></a>
+
+</body>
+</html>

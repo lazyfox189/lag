@@ -1,15 +1,96 @@
-<script>
-  alert("Graphics Card: Why?");
-  alert("Graphics Card: I guess whats done is done. What we need is to fix it.");
-  alert("You: What do we need to fix though?");
-  alert("Graphics Card: What do you mean what do we need to fix, do you even <i>know</i> what you've pressed?");
-  alert("You: Not at all...");
-  alert("Graphics Card (sighing): <i>This will take some time...<i>")
-</script>
-<dialog id="myAlert">
-  <h3><strong>Crucial Update!</strong></h3>
-  <p style="color: red;">This is formatted text inside a modal.</p>
-  <button onclick="document.getElementById('myAlert').close()">Dismiss</button>
+<dialog id="storyDialog">
+  <div class="dialog-content">
+    <div id="dialogText"></div>
+    <div class="dialog-controls">
+      <button id="nextBtn" onclick="nextLine()">Next</button>
+    </div>
+  </div>
 </dialog>
 
-<button onclick="document.getElementById('myAlert').showModal()">Trigger Alert</button>
+<style>
+  #storyDialog {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 24px;
+    width: 90%;
+    max-width: 450px;
+    background: #ffffff;
+  }
+  #storyDialog::backdrop {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+  }
+  #dialogText p {
+    margin: 12px 0;
+    line-height: 1.5;
+    font-size: 16px;
+    animation: fadeIn 0.3s ease-in-out forwards;
+  }
+  .dialog-controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+  #nextBtn {
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  #nextBtn:hover {
+    background: #0056b3;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<script>
+  // Complete array of script lines
+  const lines = [
+    "<strong>Graphics Card:</strong> Why?",
+    "<strong>Graphics Card:</strong> I guess what's done is done. What we need is to fix it.",
+    "<strong>You:</strong> What do we need to fix though?",
+    "<strong>Graphics Card:</strong> What do you mean what do we need to fix? Do you even <em>know</em> what you've pressed?",
+    "<strong>You:</strong> Not at all...",
+    "<strong>Graphics Card:</strong> <em>(sighing)</em> <em>This will take some time...</em>"
+  ];
+
+  let currentLineIndex = 0;
+  const dialogText = document.getElementById('dialogText');
+  const nextBtn = document.getElementById('nextBtn');
+  const storyDialog = document.getElementById('storyDialog');
+
+  function showNextLine() {
+    if (currentLineIndex < lines.length) {
+      // Create and append the new line elements
+      const p = document.createElement('p');
+      p.innerHTML = lines[currentLineIndex];
+      dialogText.appendChild(p);
+      currentLineIndex++;
+      
+      // Change button text to "Close" on the very last line
+      if (currentLineIndex === lines.length) {
+        nextBtn.textContent = "Close";
+      }
+    } else {
+      // Close the dialogue completely when clicking "Close"
+      storyDialog.close();
+    }
+  }
+
+  function nextLine() {
+    showNextLine();
+  }
+
+  // Automatically launch the script dialogue and load the first line
+  storyDialog.showModal();
+  showNextLine();
+</script>

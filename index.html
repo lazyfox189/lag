@@ -110,6 +110,7 @@
         processNextStep();
       }
     } else if (currentStep.type === "end-link") {
+      // Corrected link path format
       interactiveArea.innerHTML = `
         <a href="https://lazyfox189.github.io/lag/page_2.html" id="nextBtn">> Next:</a>
       `;
